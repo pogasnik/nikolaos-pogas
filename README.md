@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# pogofolio
 
-## Getting Started
+The portfolio site of Nikolaos Pogas, full-stack engineer. One page with work, experience, stack and
+contact, plus one page per project:
 
-First, run the development server:
+- `/projects/ploutos`: multi-tenant e-commerce SaaS with AADE myDATA
+- `/projects/arke`: field-service app for installation crews
+- `/projects/mydata-receipt-demo`: myDATA XML to receipt PDF ([source](https://github.com/pogasnik/mydata-receipt-demo))
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Every page is static HTML, generated at build time. There is no client-side JavaScript of our own,
+no analytics and no tracking.
+
+## Stack
+
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4. Fonts are Geist via `next/font`. The
+OpenGraph images are generated at build time with `next/og`.
+
+## Run it
+
+Requires Node 22.12+ and pnpm 10.
+
+```sh
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm build        # production build
+pnpm lint         # zero warnings allowed
+pnpm typecheck
+pnpm format       # prettier
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path                          | What                                                             |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `lib/content.ts`              | All copy: bio, projects, architecture text, diagrams, experience |
+| `app/page.tsx`                | Home page sections                                               |
+| `app/projects/[slug]/`        | Project page and its OpenGraph image                             |
+| `components/flow-diagram.tsx` | Data-flow diagram, drawn in HTML/CSS from `project.flow`         |
+| `lib/media.ts`                | Finds screenshots and recordings in `public/media/<project>/`    |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Screenshots and recordings
 
-## Learn More
+Drop files in `public/media/<project>/` and rebuild. Each project has named slots in
+`lib/content.ts` (`media`). A file whose name matches a slot fills it; anything else is shown after
+the slots, captioned from its file name. Slots with no file show a placeholder.
 
-To learn more about Next.js, take a look at the following resources:
+| Project             | Folder                              | Slot names                                 |
+| ------------------- | ----------------------------------- | ------------------------------------------ |
+| Ploutos             | `public/media/ploutos/`             | `storefront`, `admin`, `cli`               |
+| Arke                | `public/media/arke/`                | `technician-app`, `dashboard`, `event-log` |
+| myDATA receipt demo | `public/media/mydata-receipt-demo/` | `form-and-receipt` (filled)                |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Images: `.avif`, `.webp`, `.png`, `.jpg`, `.gif`. Sized from the file itself.
+- Recordings: `.mp4` and/or `.webm`. They play muted, looped and inline. Add an image with the same
+  name (for example `admin.mp4` + `admin.png`) and it becomes the poster frame.
+- Keep recordings short and small: 10–20 s, under ~3 MB, no audio track.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+Vercel picks up Next.js and pnpm on its own; there is no `vercel.json`. After connecting a custom
+domain, set `NEXT_PUBLIC_SITE_URL` (for example `https://example.com`) in the Vercel project so canonical
+links, the sitemap and OpenGraph URLs use it. Until then the Vercel production URL is used.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Licence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All rights reserved. The code is public to read; the copy and media are not for reuse.
