@@ -62,12 +62,14 @@ export const projects: Project[] = [
     problem:
       'Greek shops selling online must report every sale to AADE myDATA. Running a separate store per client does not scale for one engineer.',
     summary:
-      'One Next.js app serves every shop from one PostgreSQL database, with tenants isolated by row-level security. A paid order issues its fiscal document and sends it to myDATA through one of 5 swappable backends.',
+      'One Next.js app serves every shop from one PostgreSQL database, with tenants isolated by row-level security. A paid order issues its receipt or invoice and sends it to myDATA through one of four interchangeable providers.',
     built: [
       'One Next.js app and one shared PostgreSQL database. Every tenant isolated with row-level security.',
       'A provisioning CLI, create-ploutos-app, that sets up a new client in one command.',
-      'A myDATA transmission layer with 5 swappable backends: direct AADE, Elorus, Primer, Viva and a mock. Direct transmission verified against the AADE sandbox.',
-      'A payment webhook that issues the fiscal document, with atomic numbering in a PostgreSQL function. A failed transmission is logged. It never fails the payment.',
+      'A myDATA transmission layer with four providers behind one interface: direct to AADE, Primer, Viva and Elorus. Verified against the AADE and Primer test environments.',
+      'A payment webhook that issues the fiscal document, with gap-free numbering in a PostgreSQL function. A failed transmission is retried in the background. It never fails the payment.',
+      'The full document lifecycle: retail receipts, B2B invoices, credit notes for full and partial returns, and the movement document that goes with every courier shipment.',
+      'Shop admin covering orders, returns and refunds, stock movements, and a monthly page for the accountant that flags any sale missing its document.',
     ],
     stack: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL RLS', 'AADE myDATA'],
     links: [{ label: 'Live demo', href: 'https://ploutos.hypnotech.gr' }],
@@ -83,13 +85,21 @@ export const projects: Project[] = [
         heading: 'Payment first, fiscal document second',
         body: [
           'When a payment succeeds, the payment webhook asks a PostgreSQL function for the next document number. The function hands out numbers atomically, so two orders paid at the same moment never get the same number.',
-          'The fiscal document then goes to myDATA. If transmission fails, the failure is logged. The payment is never failed because of it: the customer has already paid.',
+          'The fiscal document then goes to myDATA. If transmission fails, it is retried in the background. The payment is never failed because of it: the customer has already paid.',
         ],
       },
       {
-        heading: 'Swappable myDATA backends',
+        heading: 'Interchangeable myDATA providers',
         body: [
-          'The transmission layer has one interface and 5 implementations: direct AADE, Elorus, Primer, Viva and a mock for development. The rest of the app does not know which one is in use. Direct transmission is verified against the AADE sandbox.',
+          'The transmission layer has one interface and four providers: direct to AADE, Primer, Viva and Elorus, plus a mock for tests. Each shop picks its provider in settings. The rest of the app does not know which one is in use.',
+          'Direct transmission and Primer are both verified against their test environments.',
+        ],
+      },
+      {
+        heading: 'One sale, one document',
+        body: [
+          'A duplicate here is not a display bug. It is a second legal document for one sale. Issuance is idempotent: a document number is claimed once, and the payment webhook and the checkout success page can both ask for the receipt without producing two.',
+          'AADE wraps its reply in an envelope with the real response XML-escaped inside. Read it without unwrapping and a successful submission looks like a failure, and a naive retry issues the sale twice. The parser unwraps it first, and a test pins that case.',
         ],
       },
     ],
@@ -102,10 +112,11 @@ export const projects: Project[] = [
         { label: 'myDATA transmission layer', note: 'one interface' },
         {
           label: 'Swappable backend',
-          options: ['AADE direct', 'Elorus', 'Primer', 'Viva', 'Mock'],
+          options: ['AADE direct', 'Primer', 'Viva', 'Elorus'],
         },
       ],
-      footnote: 'If transmission fails, the failure is logged. The payment is never failed.',
+      footnote:
+        'If transmission fails, it is retried in the background. The payment is never failed.',
     },
     media: [
       { name: 'storefront', caption: 'A tenant storefront' },
@@ -248,7 +259,7 @@ export const experience: Role[] = [
     orgNote: 'my own practice',
     period: 'Aug 2025 – present',
     points: [
-      'Ploutos: multi-tenant e-commerce SaaS on Next.js and Supabase, with AADE myDATA transmission.',
+      'Ploutos: multi-tenant e-commerce SaaS on Next.js and Supabase, with receipts, invoices, credit notes and movement documents sent to AADE myDATA.',
       'Arke: field-service app for installation crews, with geofencing, offline sync and a live dashboard.',
     ],
     projectSlugs: ['ploutos', 'arke'],
