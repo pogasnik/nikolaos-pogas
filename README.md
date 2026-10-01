@@ -1,4 +1,4 @@
-# pogofolio
+# nikolaos-pogas
 
 The portfolio site of Nikolaos Pogas, full-stack engineer. One page with work, experience, stack and
 contact, plus one page per project:
