@@ -183,7 +183,10 @@ export const projects: Project[] = [
       'A static Next.js page that parses the XML back and renders the receipt PDF from it, so the XML is the single source of truth.',
     ],
     stack: ['TypeScript', 'Next.js', 'XSD validation', 'React PDF', 'AADE myDATA'],
-    links: [{ label: 'Source on GitHub', href: 'https://github.com/pogasnik/mydata-receipt-demo' }],
+    links: [
+      { label: 'Live demo', href: 'https://mydata-receipt-demo.vercel.app' },
+      { label: 'Source on GitHub', href: 'https://github.com/pogasnik/mydata-receipt-demo' },
+    ],
     architecture: [
       {
         heading: 'Integer money',
@@ -219,7 +222,7 @@ export const projects: Project[] = [
     media: [
       { name: 'form-and-receipt', caption: 'The form, and the receipt rendered from the XML' },
     ],
-    sourceNote: 'Source is public.',
+    sourceNote: 'Source and demo are public.',
   },
 ];
 
